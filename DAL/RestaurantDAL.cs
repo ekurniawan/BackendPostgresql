@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BO;
 using Npgsql;
+using Dapper;
 
 namespace DAL
 {
@@ -18,9 +19,12 @@ namespace DAL
         {
             using (NpgsqlConnection conn = new NpgsqlConnection(GetConnStr()))
             {
-                List<Restaurant> lstResto = new List<Restaurant>();
+                //List<Restaurant> lstResto = new List<Restaurant>();
                 var strSql = @"select * from restaurants order by namarestaurant";
-                NpgsqlCommand cmd = new NpgsqlCommand(strSql, conn);
+
+                var results = conn.Query<Restaurant>(strSql);
+                return results;
+                /*NpgsqlCommand cmd = new NpgsqlCommand(strSql, conn);
                 conn.Open();
                 NpgsqlDataReader dr = cmd.ExecuteReader();
                 if (dr.HasRows)
@@ -39,8 +43,42 @@ namespace DAL
                 cmd.Dispose();
                 conn.Close();
 
-                return lstResto;
+                return lstResto;*/
             }
+        }
+
+        public Restaurant GetByID(int id)
+        {
+            Restaurant resto = new Restaurant();
+            using (NpgsqlConnection conn = new NpgsqlConnection(GetConnStr()))
+            {
+                var strSql = @"select * from restaurants where restaurantid=@id";
+                NpgsqlCommand cmd = new NpgsqlCommand(strSql, conn);
+                cmd.Parameters.AddWithValue("@id", id);
+                conn.Open();
+                NpgsqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    dr.Read();
+                    resto.restaurantid = Convert.ToInt32(dr[0]);
+                    resto.namarestaurant = dr[1].ToString();
+                }
+                dr.Close();
+                cmd.Dispose();
+                conn.Close();
+            }
+            return resto;
+        }
+
+        public IEnumerable<Restaurant> GetByNama(string nama)
+        {
+            using(NpgsqlConnection conn = new NpgsqlConnection(GetConnStr()))
+            {
+                var strSql = @"select * from restaurants where namarestaurant like @namarestaurant 
+                               order by namarestaurant";
+                var param = new { namarestaurant = "%" +  nama + "%" };
+                return conn.Query<Restaurant>(strSql, param);
+            }    
         }
 
         public void InsertData(Restaurant resto)
