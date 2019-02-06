@@ -24,6 +24,7 @@ namespace WebRestful.Controllers
             return results;
         }
 
+        //custom route 
         [Route("api/Restaurant/GetByName/{id}")]
         [HttpGet]
         public IEnumerable<Restaurant> GetByName(string id)
@@ -40,18 +41,45 @@ namespace WebRestful.Controllers
         }
 
         // POST: api/Restaurant
-        public void Post([FromBody]string value)
+        public IHttpActionResult Post(Restaurant resto)
         {
+            try
+            {
+                restoDal.InsertData(resto);
+                return Ok("Data Resto berhasil ditambahkan");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Kesalahan : " + ex.Message);
+            }
         }
 
         // PUT: api/Restaurant/5
-        public void Put(int id, [FromBody]string value)
+        public IHttpActionResult Put(Restaurant resto)
         {
+            try
+            {
+                restoDal.UpdateData(resto);
+                return Ok($"Data resto id: {resto.restaurantid} berhasil diupdate");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ditemukan Kesalahan: {ex.Message}");
+            }
         }
 
         // DELETE: api/Restaurant/5
-        public void Delete(int id)
+        public IHttpActionResult Delete(int id)
         {
+            try
+            {
+                restoDal.DeleteData(id);
+                return Ok($"Data dengan id {id} berhasil didelete");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
+            }
         }
     }
 }
