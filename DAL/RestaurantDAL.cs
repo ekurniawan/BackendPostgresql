@@ -101,12 +101,13 @@ namespace DAL
         {
             using(NpgsqlConnection conn = new NpgsqlConnection(GetConnStr()))
             {
-                var strSql = @"insert into restaurants(namarestaurant) 
-                               values(@namarestaurant)";
+                var strSql = @"insert into restaurants(namarestaurant,categoryid) 
+                               values(@namarestaurant,@categoryid)";
 
                 NpgsqlCommand cmd = new NpgsqlCommand(strSql, conn);
                 cmd.Parameters.AddWithValue("@namarestaurant", 
                     resto.namarestaurant);
+                cmd.Parameters.AddWithValue("@categoryid", resto.categoryid);
                 try
                 {
                     conn.Open();
@@ -129,12 +130,13 @@ namespace DAL
             using(NpgsqlConnection conn = new NpgsqlConnection(GetConnStr()))
             {
                 string strSql = @"update restaurants 
-                                  set namarestaurant=@namarestaurant 
+                                  set namarestaurant=@namarestaurant,categoryid=@categoryid  
                                   where restaurantid=@restaurantid";
                 var param = new
                 {
                     namarestaurant = resto.namarestaurant,
-                    restaurantid = resto.restaurantid
+                    restaurantid = resto.restaurantid,
+                    categoryid = resto.categoryid
                 };
                 try
                 {

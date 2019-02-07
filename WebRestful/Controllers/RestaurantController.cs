@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using BO;
+using BO.View;
 using DAL;
 
 namespace WebRestful.Controllers
@@ -30,6 +31,15 @@ namespace WebRestful.Controllers
         public IEnumerable<Restaurant> GetByName(string id)
         {
             var results = restoDal.GetByNama(id);
+            return results;
+        }
+
+        //relasi
+        [Route("api/Restaurant/GetRestaurantWithCategory")]
+        [HttpGet]
+        public IEnumerable<ViewCategoryRestaurant> GetRestaurantWithCategory()
+        {
+            var results = restoDal.GetRestoWithCategory();
             return results;
         }
 
