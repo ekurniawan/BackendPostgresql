@@ -6,5 +6,6 @@ namespace BO
     {
         public int restaurantid { get; set; }
         public string namarestaurant { get; set; }
+        public int categoryid { get; set; }
     }
 }

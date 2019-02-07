@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BO;
 using Npgsql;
 using Dapper;
+using BO.View;
 
 namespace DAL
 {
@@ -10,8 +11,19 @@ namespace DAL
     {
         private string GetConnStr()
         {
-            return @"Host=23.97.61.111;Port=5432;Username=postgres;
+            return @"Host=168.63.236.219;Port=5432;Username=postgres;
                      Password=actual;Database=SampleDb";
+        }
+
+        //relasi dengan table category
+        public IEnumerable<ViewCategoryRestaurant> GetRestoWithCategory()
+        {
+            using(NpgsqlConnection conn = new NpgsqlConnection(GetConnStr()))
+            {
+                string strSql = @"select c.categoryid,c.categoryname,r.restaurantid,r.namarestaurant 
+                                  from restaurants r inner join categories c on r.categoryid=c.categoryid";
+                return conn.Query<ViewCategoryRestaurant>(strSql);
+            }
         }
 
         //get data
@@ -52,7 +64,7 @@ namespace DAL
             //Restaurant resto = new Restaurant();
             using (NpgsqlConnection conn = new NpgsqlConnection(GetConnStr()))
             {
-                var strSql = @"select * from restaurants where restaurantid=@id";
+                var strSql = @"select * from restaurants where restaurantid=@restaurantid";
                 var param = new { restaurantid = id };
                 var result = conn.QuerySingleOrDefault<Restaurant>(strSql, param);
 
